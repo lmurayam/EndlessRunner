@@ -131,6 +131,85 @@ class Level{
             }
             
         }
+
+        //Create stairs
+        let stairs = []
+
+        while (stairs.length<num_stairs){
+            let size = Phaser.Math.Between(...this.stair_size)
+            let valid_location = false
+            let location = null
+            let location_range = null
+            tries = 0;
+            while(!valid_location&&tries<repeats){
+                valid_location = true
+                location = Phaser.Math.RND.pick(valid_ground)
+                //find continuous numbers around
+                location_range = []
+                let x = valid_ground.indexOf(location)
+                while (x>0){
+                    if (valid_ground[x-1] == valid_ground[x] -1){
+                        location_range.push(valid_ground[x-1])
+                        x -= 1
+                    }
+                    else{
+                        break
+                    }
+                }
+                location_range.reverse()
+                location_range.push(location)
+                x = valid_ground.indexOf(location)
+                while(x<valid_ground.length-1){
+                    if (valid_ground[x+1] == valid_ground[x] +1){
+                        location_range.push(valid_ground[x+1])
+                        x += 1
+                    }
+                    else{
+                        break
+                    }
+                }
+                ///
+                if (size>location_range.length){
+                    tries += 1
+                    valid_location = false
+                }
+            }
+            if (valid_location==false){
+                break
+            }
+            //stairs go down
+            if (Math.random()<.5){
+                let tallest = Phaser.Math.RND.between(0,location_range.length-size)
+                location = location_range[tallest]
+                let remaining = size
+                while (remaining>0){
+                    for (let i = 0; i < remaining; i++){
+                        this.map[1+(size-remaining)][location+i]='B'
+                        let index = valid_ground.indexOf(location+i)
+                        if (index != -1) {
+                            valid_ground.splice(index, 1)
+                        }
+                    }
+                    remaining -= 1
+                }
+            }
+            //stairs go up
+            else{
+                let tallest = Phaser.Math.RND.between(size-1,location_range.length-1)
+                location = location_range[tallest]
+                let remaining = size
+                while (remaining>0){
+                    for (let i = 0; i < remaining; i++){
+                        this.map[1+(size-remaining)][location-remaining+i+1]='B'
+                        let index = valid_ground.indexOf(location-remaining+i+1)
+                        if (index != -1) {
+                            valid_ground.splice(index, 1)
+                        }
+                    }
+                    remaining -= 1
+                }
+            }
+        }
     }
 }
 
