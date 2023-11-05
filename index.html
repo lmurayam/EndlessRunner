@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENDLESS RUNNER</title>
+    <style>
+        body{
+            background-color:#FACADE;
+        }
+        #gameCanvas{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    DEBUG <input type="checkbox" id="debugToggle">
+
+    <div id="gameCanvas">
+        <script src="./lib/phaser.js"></script>
+        <script src="./src/prefabs/LevelObj.js"></script>
+        <script src="./src/prefabs/Level.js"></script>
+        <script src="./src/prefabs/Player.js"></script>
+        <script src="./src/scenes/Load.js"></script>
+        <script src="./src/scenes/Menu.js"></script>
+        <script src="./src/scenes/Play.js"></script>
+        <script src="./src/main.js"></script>
+    </div>
+</body>
+</html>
