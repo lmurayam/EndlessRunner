@@ -27,7 +27,7 @@ let game = new Phaser.Game(config)
 
 let { width, height } = game.config
 
-let levelSpeed = 140
+let levelSpeed = 250
 
 let keySpace, mouseClick
 
