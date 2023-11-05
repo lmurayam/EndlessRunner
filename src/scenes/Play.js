@@ -13,7 +13,7 @@ class Play extends Phaser.Scene{
 
         this.controller.spawners.getChildren().forEach(spawner => {
             this.physics.add.collider(this.player,spawner.blocks)
-        });
+        })
 
         this.gameOver = false
 
@@ -24,14 +24,14 @@ class Play extends Phaser.Scene{
     }
     update(){
         html_input(this)
-        this.background.tilePositionX += 4;
+        this.background.tilePositionX += 4
         if(!this.gameOver){
             this.controller.update()
             this.player.update()
         }
         
-        if(this.controller.spawner1.blocks.getLength()>10){
-            this.player.enable()
+        if(this.controller.spawner0.blocks.getLength()>10){
+            //this.player.enable()
         }
     }
 }

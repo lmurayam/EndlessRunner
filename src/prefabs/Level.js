@@ -25,7 +25,6 @@ class Level{
         B   =   Box
         T   =   Screw head
         |   =   Screw body
-        O   =   Coin
         */ 
 
         //fill empty array
@@ -35,11 +34,11 @@ class Level{
 
         //intialize ranges
         let num_holes       =   Phaser.Math.Between(...this.hole_range)
-        let num_pipes       =   Phaser.Math.Between(...this.screw_range)
+        let num_screws       =   Phaser.Math.Between(...this.screw_range)
         let num_stairs      =   Phaser.Math.Between(...this.stair_range)
         let repeats         =   5
         let tries           =   0
-        console.log(num_holes,num_pipes,num_stairs)
+        console.log(num_holes,num_screws,num_stairs)
 
         //create ground
         for (let i = 0; i < this.x; i++){
@@ -55,29 +54,83 @@ class Level{
         //Create holes
         let holes = [] //List containing holes, a hole is a list [x,y] inclusive
 
-        while (holes.length<num_holes&&tries<repeats){
-            tries += 1
+        while (holes.length<num_holes){
+            tries = 0;
             let size = Phaser.Math.Between(...this.hole_size)
             let valid_location = false
             let location = null
-            while(!valid_location){
+            while(!valid_location&&tries<repeats){
                 location = Phaser.Math.RND.pick(valid_ground)
                 valid_location = true
                 for (let i = location-1; i < location+size+1; i++){
                     if (this.map[0][i]!='X'){
                         valid_location = false
+                        tries += 1
                         break
                     }
                 }
             }
+            if (valid_location = false){
+                break
+            }
             for (let i = location; i < location+size; i++){
                 this.map[0][i]='-'
-                valid_ground.pop(i)
+                let index = valid_ground.indexOf(i)
+                if (index != -1) {
+                    valid_ground.splice(index, 1)
+                }
 
             }
             holes.push([location,location+size-1])
         }
-        tries = 0;
+        
+
+        //Create screws
+        let screws = []
+
+        while (screws.length<num_screws){
+            let length = Phaser.Math.Between(...this.screw_length)
+            let valid_location = false
+            let location = null
+            tries = 0;
+            while(!valid_location&&tries<repeats){
+                valid_location = true
+                location = Phaser.Math.RND.pick(valid_ground)
+                for (let i = location-1; i <= location+1; i++){
+                    if (this.map[0][i]!='X'){
+                        valid_location = false
+                        tries += 1
+                        break
+                    }
+                }
+            }
+            if (valid_location==false){
+                break
+            }
+            let screwBody = []
+            for (let i = 1; i <= length; i ++){
+                screwBody.push([i,location])
+            }
+            for (let screw of screwBody) {
+                let y = screw[0];
+                let x = screw[1];
+                
+                if (screw == screwBody[screwBody.length-1]) {
+                    this.map[y][x] = 'T';
+                } else {
+                    this.map[y][x] = '|';
+                }
+            }
+            screws.push(location)
+
+            for (let i = location-1; i <= location+1; i++){
+                let index = valid_ground.indexOf(i)
+                if (index != -1) {
+                    valid_ground.splice(index, 1)
+                }
+            }
+            
+        }
     }
 }
 
@@ -101,14 +154,23 @@ class Spawner extends Phaser.GameObjects.Sprite{
                 block = new LevelObj(this.scene, this.x, this.y,'ground')
                 this.blocks.add(block)
                 break
+            case 'T':
+                block = new LevelObj(this.scene, this.x, this.y,'screw_head')
+                this.blocks.add(block)
+                break
+            case '|':
+                    block = new LevelObj(this.scene, this.x, this.y,'screw_body')
+                    this.blocks.add(block)
+                    break
+            case 'B':
+                    block = new LevelObj(this.scene, this.x, this.y,'box')
+                    this.blocks.add(block)
+                    break
             case '-':
                 block = new LevelObj(this.scene, this.x, this.y,'ground')
                 block.setAlpha(0)
                 break
         }
-
-        
-        
         this.last_block = block
     }
     update(){
@@ -124,18 +186,31 @@ class Spawner extends Phaser.GameObjects.Sprite{
 
 class Controller{
     constructor(scene){
-        this.spawners = scene.add.group()
-        this.spawner1 = new Spawner(scene, width+64,height-32)
-        this.spawner1.feed_array(Array(10).fill('X'))
-        this.spawners.add(this.spawner1)
+        
+        this.spawner0 = new Spawner(scene, width+64,height-32)
+        this.spawner1 = new Spawner(scene, width+64,height-96)
+        this.spawner2 = new Spawner(scene, width+64,height-160)
+        this.spawner3 = new Spawner(scene, width+64,height-224)
+        this.spawner4 = new Spawner(scene, width+64,height-288)
+        this.spawner0.feed_array(Array(10).fill('X'))
+        this.spawner1.feed_array(Array(10).fill('-'))
+        this.spawner2.feed_array(Array(10).fill('-'))
+        this.spawner3.feed_array(Array(10).fill('-'))
+        this.spawner4.feed_array(Array(10).fill('-'))
+        this.spawners = scene.add.group([this.spawner0,this.spawner1,this.spawner2,this.spawner3,this.spawner4])
 
-        this.levelBuffer = new Level(64,4)
+        this.levelBuffer = new Level(128,5)
+
+        this.levelBuffer.initialize()
+        console.log(this.levelBuffer.map)
     }
     update(){
-        if (this.spawner1.levelArray.length<=1){
+        if (this.spawner0.levelArray.length<=1){
             this.levelBuffer.initialize()
-            console.log(this.levelBuffer.map)
-            this.spawner1.feed_array(this.levelBuffer.map.shift())
+            this.spawners.getChildren().forEach(spawner => {
+                spawner.feed_array(this.levelBuffer.map.shift())
+            });
+            
         }
         this.spawners.getChildren().forEach(spawner => {
             spawner.update()
