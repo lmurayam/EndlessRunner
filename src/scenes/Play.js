@@ -19,15 +19,74 @@ class Play extends Phaser.Scene{
             this.physics.add.collider(this.player,spawner.blocks)
         })
 
+        keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
         mouseClick = false;
         this.input.on('pointerdown', () => {mouseClick = true;});
         this.input.on('pointerup', () => {mouseClick = false;});
         this.gameOver = false
+
+        let textConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#5Fcde4',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+        }
+        this.timeCounter = this.add.text(width/25 , height/25, "SPACE OR CLICK TO FLY", textConfig);
+
+        textConfig.fixedWidth = 100
+        this.timeElapsed = 0
+        this.timeCounter = this.add.text(width-width/6, height/25, this.timeElapsed, textConfig);
+        this.time.addEvent({
+            delay:1000,
+            callback: function(){
+                if(this.gameOver == false){
+                    this.timeElapsed += 1
+                    this.timeCounter.text = this.timeElapsed; 
+                }      
+            },
+            callbackScope: this,
+            loop: true,
+        })
+
+        this.restart = this.add.sprite(width/3,height/2,'restart', 1).setScale(5).setAlpha(0).setDepth(1)
+        this.menuButton = this.add.sprite(width - width/3,height/2,'menuButton', 0).setScale(5).setAlpha(0).setDepth(1)
+        this.onRestart = true
     }
     update(){
         html_input(this)
         this.background.tilePositionX += 4
+        if(this.gameOver){
+            this.restart.setAlpha(1)
+            this.menuButton.setAlpha(1)
+            if (Phaser.Input.Keyboard.JustDown(keyLeft)||Phaser.Input.Keyboard.JustDown(keyRight)){
+                this.onRestart = !this.onRestart
+                if (this.onRestart){
+                    this.restart.setFrame(1)
+                    this.menuButton.setFrame(0)
+                }
+                else{
+                    this.restart.setFrame(0)
+                    this.menuButton.setFrame(1)
+                }
+            }
+            if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                if(this.onRestart){
+                    this.scene.restart()
+                }
+                else{
+                    this.scene.start('menuScene');
+                }
+                
+            }
+        }
         if(!this.gameOver){
             this.controller.update()
             this.player.update()
@@ -35,7 +94,6 @@ class Play extends Phaser.Scene{
 
         if(this.player.enabled&&(this.player.x<0 || this.player.y>height)){
             this.gameOver = true
-            this.scene.restart();
         }
         
         if(this.controller.spawner0.blocks.getLength()>10){

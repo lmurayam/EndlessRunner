@@ -18,6 +18,23 @@ class Load extends Phaser.Scene{
         });
         this.load.path = './assets/';
         this.load.image('ground','ground.png')
+        this.load.spritesheet('start','start.png', {
+            frameWidth: 39,
+            frameHeight: 16
+        })
+        this.load.spritesheet('credits','credits.png', {
+            frameWidth: 53,
+            frameHeight: 16
+        })
+        this.load.spritesheet('restart','restart.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+        this.load.spritesheet('menuButton','menuButton.png', {
+            frameWidth: 32,
+            frameHeight: 16
+        })
+        this.load.image('menu','menu.png')
         this.load.image('screw_body','screw_body.png')
         this.load.image('screw_head','screw_head.png')
         this.load.image('box','box.png')
