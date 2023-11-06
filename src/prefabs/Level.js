@@ -11,11 +11,11 @@ class Level{
         //Create the empty level map
         this.map = []
 
-        this.hole_range      =   [2,5]   //Range of possible holes
-        this.hole_size       =   [1,4]   //Range of possible hole size
-        this.screw_range     =   [5,15]  //Range of possible srews
+        this.hole_range      =   [3,6]   //Range of possible holes
+        this.hole_size       =   [2,4]   //Range of possible hole size
+        this.screw_range     =   [5,10]  //Range of possible srews
         this.screw_length    =   [1,3]   //Range of possible screw length
-        this.stair_range     =   [3,6]   //Range of possible stairs
+        this.stair_range     =   [3,5]   //Range of possible stairs
         this.stair_size      =   [2,4]   //Range of possible stair size
     }
     initialize(){
@@ -34,7 +34,7 @@ class Level{
 
         //intialize ranges
         let num_holes       =   Phaser.Math.Between(...this.hole_range)
-        let num_screws       =   Phaser.Math.Between(...this.screw_range)
+        let num_screws      =   Phaser.Math.Between(...this.screw_range)
         let num_stairs      =   Phaser.Math.Between(...this.stair_range)
         let repeats         =   5
         let tries           =   0
@@ -218,6 +218,7 @@ class Spawner extends Phaser.GameObjects.Sprite{
         super(scene,x,y)
         scene.add.existing(this)
         this.blocks = scene.add.group();
+        this.coins = scene.add.group();
         this.current_texture = null
         
         this.last_block = null
@@ -246,6 +247,17 @@ class Spawner extends Phaser.GameObjects.Sprite{
                     this.blocks.add(block)
                     break
             case '-':
+                //if (Math.random()<.99){
+                if (Math.random()<=1){
+                    block = new LevelObj(this.scene, this.x, this.y,'ground')
+                    block.setAlpha(0)
+                }
+                else{
+                    block = new LevelObj(this.scene, this.x, this.y,'coin')
+                    this.coins.add(block)
+                }
+                break
+            case '--':
                 block = new LevelObj(this.scene, this.x, this.y,'ground')
                 block.setAlpha(0)
                 break
@@ -272,10 +284,10 @@ class Controller{
         this.spawner3 = new Spawner(scene, width+64,height-224)
         this.spawner4 = new Spawner(scene, width+64,height-288)
         this.spawner0.feed_array(Array(10).fill('X'))
-        this.spawner1.feed_array(Array(10).fill('-'))
-        this.spawner2.feed_array(Array(10).fill('-'))
-        this.spawner3.feed_array(Array(10).fill('-'))
-        this.spawner4.feed_array(Array(10).fill('-'))
+        this.spawner1.feed_array(Array(10).fill('--'))
+        this.spawner2.feed_array(Array(10).fill('--'))
+        this.spawner3.feed_array(Array(10).fill('--'))
+        this.spawner4.feed_array(Array(10).fill('--'))
         this.spawners = scene.add.group([this.spawner0,this.spawner1,this.spawner2,this.spawner3,this.spawner4])
 
         this.levelBuffer = new Level(128,5)

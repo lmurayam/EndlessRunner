@@ -28,6 +28,13 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.body.setVelocityX(levelSpeed)
             }
             if((keySpace.isDown || mouseClick)&&!this.isJumping){
+                let fragments = this.scene.add.particles(this.x, this.y+16, 'ground', {
+                    speed: 100,
+                    lifespan: 150,
+                    gravityY: 1000,
+                    emitting: false
+                });
+                fragments.explode(16);
                 //this.isJumping=true
                 this.body.setVelocityY(-300)
             }

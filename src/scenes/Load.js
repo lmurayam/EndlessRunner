@@ -21,6 +21,7 @@ class Load extends Phaser.Scene{
         this.load.image('screw_body','screw_body.png')
         this.load.image('screw_head','screw_head.png')
         this.load.image('box','box.png')
+        this.load.image('coin','coin.png')
         this.load.image('background','background.png')
         this.load.image('player','player.png')
 
