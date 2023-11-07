@@ -8,7 +8,7 @@ class Player extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(false)
         this.enabled = false
         this.isColliding = false
-        this.isJumping = false
+        this.isFlying = false
         this.targetX= x
         this.body.setFriction(0)
     }
@@ -27,7 +27,8 @@ class Player extends Phaser.GameObjects.Sprite {
             else{
                 this.body.setVelocityX(levelSpeed)
             }
-            if((keySpace.isDown || mouseClick)&&!this.isJumping){
+            this.isFlying = false
+            if((keySpace.isDown || mouseClick)){
                 let fragments = this.scene.add.particles(this.x, this.y+32, 'particle', {
                     speed: 100,
                     lifespan: 150,
@@ -35,8 +36,8 @@ class Player extends Phaser.GameObjects.Sprite {
                     emitting: false
                 });
                 fragments.explode(16);
-                //this.isJumping=true
                 this.body.setVelocityY(-300)
+                this.isFlying = true
             }
             
         }
@@ -48,7 +49,8 @@ class Player extends Phaser.GameObjects.Sprite {
                 gravityX: 100,
                 emitting: false
             });
-            fragments.explode(16);
+            fragments.explode(16)
+            this.isFlying = true
         }
     }
 

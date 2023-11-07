@@ -11,12 +11,12 @@ class Level{
         //Create the empty level map
         this.map = []
 
-        this.hole_range      =   [3,6]   //Range of possible holes
-        this.hole_size       =   [2,4]   //Range of possible hole size
-        this.screw_range     =   [5,10]  //Range of possible srews
+        this.hole_range      =   [3,5]   //Range of possible holes
+        this.hole_size       =   [2,3]   //Range of possible hole size
+        this.screw_range     =   [7,10]  //Range of possible srews
         this.screw_length    =   [1,3]   //Range of possible screw length
-        this.stair_range     =   [3,5]   //Range of possible stairs
-        this.stair_size      =   [2,4]   //Range of possible stair size
+        this.stair_range     =   [8,12]   //Range of possible stairs
+        this.stair_size      =   [2,3]   //Range of possible stair size
     }
     initialize(){
         /*
@@ -209,6 +209,7 @@ class Level{
                     remaining -= 1
                 }
             }
+            stairs.push(location)
         }
     }
 }
@@ -268,7 +269,7 @@ class Spawner extends Phaser.GameObjects.Sprite{
         this.blocks.getChildren().forEach(block => {
             block.update()
         });
-        if (this.last_block==null||this.last_block.x < width + 8){
+        if (this.last_block==null||this.last_block.x < width + 12){
 
             this.create_block(this.levelArray.shift())
         }
@@ -283,14 +284,16 @@ class Controller{
         this.spawner2 = new Spawner(scene, width+64,height-160)
         this.spawner3 = new Spawner(scene, width+64,height-224)
         this.spawner4 = new Spawner(scene, width+64,height-288)
+        this.spawner5 = new Spawner(scene, width+64,height-352)
         this.spawner0.feed_array(Array(10).fill('X'))
         this.spawner1.feed_array(Array(10).fill('--'))
         this.spawner2.feed_array(Array(10).fill('--'))
         this.spawner3.feed_array(Array(10).fill('--'))
         this.spawner4.feed_array(Array(10).fill('--'))
-        this.spawners = scene.add.group([this.spawner0,this.spawner1,this.spawner2,this.spawner3,this.spawner4])
+        this.spawner5.feed_array(Array(10).fill('--'))
+        this.spawners = scene.add.group([this.spawner0,this.spawner1,this.spawner2,this.spawner3,this.spawner4,this.spawner5])
 
-        this.levelBuffer = new Level(128,5)
+        this.levelBuffer = new Level(128,6)
 
         this.levelBuffer.initialize()
         console.log(this.levelBuffer.map)

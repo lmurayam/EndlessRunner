@@ -37,6 +37,7 @@ class Menu extends Phaser.Scene{
     update(){
         if(this.inCredits){
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                this.sound.play('sfx_confirm'); 
                 this.inCredits = false
                 this.creditScreen.setAlpha(0).setDepth(0)
                 }  
@@ -44,6 +45,7 @@ class Menu extends Phaser.Scene{
         else{
             if (Phaser.Input.Keyboard.JustDown(keyLeft)||Phaser.Input.Keyboard.JustDown(keyRight)){
                 this.onStart = !this.onStart
+                this.sound.play('sfx_select');
                 if (this.onStart){
                     this.start.setFrame(1).setScale(5.5)
                     this.credits.setFrame(0).setScale(5)
@@ -54,6 +56,7 @@ class Menu extends Phaser.Scene{
                 }
             }
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                this.sound.play('sfx_confirm');
                 if(this.onStart){
                     this.scene.start('playScene');
                 }

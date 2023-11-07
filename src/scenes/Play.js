@@ -13,16 +13,6 @@ class Play extends Phaser.Scene{
         this.player = new Player(this, width/3,height*2/3,'player')
         this.player.x=0
         this.player.body.setVelocityX(levelSpeed/2)
-        this.anims.create({
-            key: 'playerLoop',
-            frameRate: 4,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('player',{
-                start: 0,
-                end: 7
-            }),
-            loop: true
-        })
         this.player.play('playerLoop')
         
         this.controller = new Controller(this)
@@ -62,7 +52,15 @@ class Play extends Phaser.Scene{
                 if(this.gameOver == false){
                     this.timeElapsed += 1
                     this.timeCounter.text = this.timeElapsed; 
-                }      
+                }
+                if(this.timeElapsed == 15){ // gets harder after buffer clears
+                    this.controller.levelBuffer.hole_range = [4,5]
+                    this.controller.levelBuffer.hole_size = [2,4]
+                    this.controller.levelBuffer.screw_range = [8,14]
+                    this.controller.levelBuffer.screw_length = [2,5]
+                    this.controller.levelBuffer.stair_range = [10,15]
+                    this.controller.levelBuffer.stair_size = [2,5]
+                }
             },
             callbackScope: this,
             loop: true,
@@ -71,6 +69,16 @@ class Play extends Phaser.Scene{
         this.restart = this.add.sprite(width/3,height/2,'restart', 1).setScale(5.5).setAlpha(0).setDepth(1)
         this.menuButton = this.add.sprite(width - width/3,height/2,'menuButton', 0).setScale(5).setAlpha(0).setDepth(1)
         this.onRestart = true
+
+        this.jetpack = this.sound.add('sfx_jetpack', { 
+            mute: false,
+            volume:  0,
+            rate: 1,
+            loop: true 
+        });
+        this.jetpack.play()
+
+        this.dead = false
     }
     update(){
         html_input(this)
@@ -82,6 +90,7 @@ class Play extends Phaser.Scene{
             this.restart.setAlpha(1)
             this.menuButton.setAlpha(1)
             if (Phaser.Input.Keyboard.JustDown(keyLeft)||Phaser.Input.Keyboard.JustDown(keyRight)){
+                this.sound.play('sfx_select');
                 this.onRestart = !this.onRestart
                 if (this.onRestart){
                     this.restart.setFrame(1).setScale(5.5)
@@ -93,11 +102,13 @@ class Play extends Phaser.Scene{
                 }
             }
             if (Phaser.Input.Keyboard.JustDown(keySpace)){
+                this.sound.play('sfx_confirm');
                 if(this.onRestart){
                     this.scene.restart()
                 }
                 else{
                     this.scene.start('menuScene');
+                    this.jetpack.stop()
                 }
                 
             }
@@ -105,10 +116,22 @@ class Play extends Phaser.Scene{
         if(!this.gameOver){
             this.controller.update()
             this.player.update()
+            if(this.player.isFlying){
+                this.jetpack.volume = 0.5
+            }
+            if(!this.player.isFlying){
+                this.jetpack.volume = 0
+            }
         }
 
         if(this.player.enabled&&(this.player.x<0 || this.player.y>height)){
             this.gameOver = true
+            if(!this.dead){
+                this.sound.play('sfx_death')
+                this.dead = true
+            }
+            this.jetpack.volume = 0
+            this.jetpack.stop()
         }
         
         if(this.controller.spawner0.blocks.getLength()>10){

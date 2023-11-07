@@ -49,7 +49,7 @@ class Load extends Phaser.Scene{
         //
         this.load.audio('bgm', ['backgroundSong.mp3']);
 
-        this.load.audio('sfx_dead', ['sfx_dead.mp3']);
+        this.load.audio('sfx_death', ['sfx_death.mp3']);
         this.load.audio('sfx_jetpack', ['sfx_jetpack.mp3']);
         this.load.audio('sfx_select', ['sfx_select.mp3']);
         this.load.audio('sfx_confirm', ['sfx_confirm.mp3']);
@@ -62,6 +62,16 @@ class Load extends Phaser.Scene{
             rate: 1,
             loop: true 
         });
+        this.anims.create({
+            key: 'playerLoop',
+            frameRate: 4,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('player',{
+                start: 0,
+                end: 7
+            }),
+            loop: true
+        })
         this.bgm.play();
         this.scene.start('menuScene');
     }
