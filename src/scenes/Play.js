@@ -43,6 +43,10 @@ class Play extends Phaser.Scene{
             },
         }
         this.timeCounter = this.add.text(width/25 , height/25, "SPACE OR CLICK TO FLY", textConfig);
+        this.lazerStart = false
+
+        this.lazerWarning = this.add.text(width/2 , height/25, "AVOID LASER", textConfig);
+        this.lazerWarning.setVisible(false)
 
         textConfig.fixedWidth = 100
         this.timeElapsed = 0
@@ -55,7 +59,13 @@ class Play extends Phaser.Scene{
                     this.timeCounter.text = this.timeElapsed; 
                 }
                 if(this.timeElapsed == 15){ 
-                    this.rockets = true
+                    this.lazerStart = true
+                    this.lazerWarning.setVisible(true)
+                    this.lazer = new Lazer(this,width+32,height/6,'lazer')
+                    this.physics.add.collider(this.player,this.lazer, (player,lazer)=>{
+                        player.x = -128
+                        player.setAlpha(0)
+                    })
                     // gets harder after buffer clears
                     this.controller.levelBuffer.hole_range = [3,6]
                     this.controller.levelBuffer.hole_size = [2,4]
@@ -119,6 +129,9 @@ class Play extends Phaser.Scene{
         if(!this.gameOver){
             this.controller.update()
             this.player.update()
+            if(this.lazerStart){
+                this.lazer.update()
+            }
             if(this.player.isFlying){
                 this.jetpack.volume = 0.5
             }
