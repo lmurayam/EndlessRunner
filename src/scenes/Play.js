@@ -29,6 +29,7 @@ class Play extends Phaser.Scene{
         this.input.on('pointerdown', () => {mouseClick = true;});
         this.input.on('pointerup', () => {mouseClick = false;});
         this.gameOver = false
+        this.rockets = false
 
         let textConfig = {
             fontFamily: 'Courier',
@@ -53,10 +54,12 @@ class Play extends Phaser.Scene{
                     this.timeElapsed += 1
                     this.timeCounter.text = this.timeElapsed; 
                 }
-                if(this.timeElapsed == 15){ // gets harder after buffer clears
-                    this.controller.levelBuffer.hole_range = [4,5]
+                if(this.timeElapsed == 15){ 
+                    this.rockets = true
+                    // gets harder after buffer clears
+                    this.controller.levelBuffer.hole_range = [3,6]
                     this.controller.levelBuffer.hole_size = [2,4]
-                    this.controller.levelBuffer.screw_range = [8,14]
+                    this.controller.levelBuffer.screw_range = [5,8]
                     this.controller.levelBuffer.screw_length = [2,5]
                     this.controller.levelBuffer.stair_range = [10,15]
                     this.controller.levelBuffer.stair_size = [2,5]
