@@ -34,16 +34,30 @@ class Load extends Phaser.Scene{
             frameWidth: 32,
             frameHeight: 16
         })
+        this.load.spritesheet('player','player.png', {
+            frameWidth: 16,
+            frameHeight: 32
+        })
         this.load.image('menu','menu.png')
+        this.load.image('creditScreen','creditScreen.png')
+        this.load.image('particle','particle.png')
         this.load.image('screw_body','screw_body.png')
         this.load.image('screw_head','screw_head.png')
         this.load.image('box','box.png')
         this.load.image('coin','coin.png')
         this.load.image('background','background.png')
-        this.load.image('player','player.png')
+        //
+        this.load.audio('bgm', ['backgroundSong.mp3']);
 
     }
     create(){
+        this.bgm = this.sound.add('bgm', { 
+            mute: false,
+            volume:  .5,
+            rate: 1,
+            loop: true 
+        });
+        this.bgm.play();
         this.scene.start('menuScene');
     }
 }

@@ -28,7 +28,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.body.setVelocityX(levelSpeed)
             }
             if((keySpace.isDown || mouseClick)&&!this.isJumping){
-                let fragments = this.scene.add.particles(this.x, this.y+16, 'ground', {
+                let fragments = this.scene.add.particles(this.x, this.y+32, 'particle', {
                     speed: 100,
                     lifespan: 150,
                     gravityY: 1000,
@@ -39,6 +39,16 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.body.setVelocityY(-300)
             }
             
+        }
+        else{
+            let fragments = this.scene.add.particles(this.x, this.y+32, 'particle', {
+                speed: 100,
+                lifespan: 150,
+                gravityY: 1000,
+                gravityX: 100,
+                emitting: false
+            });
+            fragments.explode(16);
         }
     }
 

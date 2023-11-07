@@ -6,12 +6,24 @@ class Play extends Phaser.Scene{
         this.physics.world.drawDebug = false;
         this.physics.world.setBounds(0, 90,width,height-90,false,true,true,false)
         console.log("In Play")
+
         this.score = 0
         this.background = this.add.tileSprite(0, 0, 960, 640, 'background').setOrigin(0, 0);
 
         this.player = new Player(this, width/3,height*2/3,'player')
         this.player.x=0
         this.player.body.setVelocityX(levelSpeed/2)
+        this.anims.create({
+            key: 'playerLoop',
+            frameRate: 4,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('player',{
+                start: 0,
+                end: 7
+            }),
+            loop: true
+        })
+        this.player.play('playerLoop')
         
         this.controller = new Controller(this)
 
@@ -56,7 +68,7 @@ class Play extends Phaser.Scene{
             loop: true,
         })
 
-        this.restart = this.add.sprite(width/3,height/2,'restart', 1).setScale(5).setAlpha(0).setDepth(1)
+        this.restart = this.add.sprite(width/3,height/2,'restart', 1).setScale(5.5).setAlpha(0).setDepth(1)
         this.menuButton = this.add.sprite(width - width/3,height/2,'menuButton', 0).setScale(5).setAlpha(0).setDepth(1)
         this.onRestart = true
     }
@@ -64,17 +76,20 @@ class Play extends Phaser.Scene{
         html_input(this)
         this.background.tilePositionX += 4
         if(this.gameOver){
+            if(highScore<this.timeElapsed){
+                highScore = this.timeElapsed
+            }
             this.restart.setAlpha(1)
             this.menuButton.setAlpha(1)
             if (Phaser.Input.Keyboard.JustDown(keyLeft)||Phaser.Input.Keyboard.JustDown(keyRight)){
                 this.onRestart = !this.onRestart
                 if (this.onRestart){
-                    this.restart.setFrame(1)
-                    this.menuButton.setFrame(0)
+                    this.restart.setFrame(1).setScale(5.5)
+                    this.menuButton.setFrame(0).setScale(5)
                 }
                 else{
-                    this.restart.setFrame(0)
-                    this.menuButton.setFrame(1)
+                    this.restart.setFrame(0).setScale(5)
+                    this.menuButton.setFrame(1).setScale(5.5)
                 }
             }
             if (Phaser.Input.Keyboard.JustDown(keySpace)){

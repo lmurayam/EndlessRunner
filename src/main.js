@@ -29,6 +29,8 @@ let { width, height } = game.config
 
 let levelSpeed = 250
 
+let highScore = 0
+
 let keySpace, mouseClick, keyLeft, keyRight
 
 function html_input(scene){
