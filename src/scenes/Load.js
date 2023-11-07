@@ -49,6 +49,11 @@ class Load extends Phaser.Scene{
         //
         this.load.audio('bgm', ['backgroundSong.mp3']);
 
+        this.load.audio('sfx_dead', ['sfx_dead.mp3']);
+        this.load.audio('sfx_jetpack', ['sfx_jetpack.mp3']);
+        this.load.audio('sfx_select', ['sfx_select.mp3']);
+        this.load.audio('sfx_confirm', ['sfx_confirm.mp3']);
+
     }
     create(){
         this.bgm = this.sound.add('bgm', { 
